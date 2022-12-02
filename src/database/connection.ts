@@ -1,14 +1,14 @@
-const { Pool, Client } = require("pg");
+const { Pool, Client } = require('pg');
 
 const pool = new Pool({
-  user: process.env.USER,
-  host: process.env.HOST,
-  database: process.env.DATABASE,
-  password: process.env.PASSWORD,
-  port: process.env.PORT,
+  user: process.env.USER || 'postgres',
+  host: process.env.HOST || 'localhost',
+  database: process.env.DATABASE || 'postgres',
+  password: process.env.PASSWORD || 'postgres',
+  port: process.env.PORT || 5432,
 });
 
-class Connection {
+export class Connection {
   async query(sql: string, params?: any[]) {
     try {
       const connection = await pool.connect();
@@ -23,8 +23,27 @@ class Connection {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      pool.end();
+    }
+  }
+  async insert(table: string, params: any[]) {
+    const values = params.map((_, index) => `$${index + 1}`).join(', ');
+    const sql = `INSERT INTO ${table} VALUES (${values})`;
+    const result = await this.query(sql, params);
+    return result;
+  }
+
+  async select(table: string, campos: string[], where?: string) {
+    try {
+      const sql = `SELECT ${campos.join(', ')} FROM ${table} ${
+        where ? where : ''
+      }`;
+
+      const result = await this.query(sql);
+      return result.rows;
+    } catch (erro) {
+      console.log('erro', erro);
     }
   }
 }
-
-const connection = new Connection();
