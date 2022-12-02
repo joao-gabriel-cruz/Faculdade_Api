@@ -11,4 +11,4 @@ app.get('/', (request, response) => {
 
 app.use('/users', userRouter);
 
-app.listen(3003, () => console.log('Server is running 🚀'));
+app.listen(5000, () => console.log('Server is running 🚀'));
