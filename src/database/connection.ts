@@ -5,7 +5,7 @@ const pool = new Pool({
   host: process.env.HOST || 'localhost',
   database: process.env.DATABASE || 'postgres',
   password: process.env.PASSWORD || 'postgres',
-  port: process.env.PORT || 5432,
+  port: process.env.PORT_DB || 5432,
 });
 
 export class Connection {
