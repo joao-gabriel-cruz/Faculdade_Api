@@ -1,32 +1,44 @@
 import { Router, Request, Response } from 'express';
+import { StudentsType } from '../../@types/students';
 import { Connection } from '../../database/connection';
+import { Student } from '../../model/users/students';
 
 const studentRouter = Router();
 
-studentRouter.get('/', async (request: Request, response: Response) => {
+studentRouter.post('/', async (request: Request, response: Response) => {
   try {
+    const { search, where } = request.body;
+
     const connection = new Connection();
-    const result = await connection.select('students', ['name', 'id']);
+    console.log('where', where);
+
+    const result = await connection.select(
+      'students',
+      search,
+      where && `WHERE registration = '${where}'`
+    );
+
+    if (result.length === 0) {
+      return response.json({
+        message: 'Student found',
+      });
+    }
     response.json(result);
-    console.log(result);
   } catch (error) {
     response.status(500).send('Internal server error');
   }
 });
 
-studentRouter.post('/', async (request: Request, response: Response) => {
+studentRouter.post('/create', async (request: Request, response: Response) => {
   try {
-    const student = request.body;
-    const connection = new Connection();
-    const result = await connection.insert('students', [
-      student.id,
-      student.name,
-      student.subject,
-    ]);
-    response.send('Student created');
-    console.log(result.rows);
-  } catch (err) {
-    console.log(err);
+    const student: StudentsType = request.body;
+
+    const newStudent = new Student({ ...student });
+
+    await newStudent.saveDataBase('students', { ...newStudent });
+
+    response.send({ newStudent }).status(201);
+  } catch (error) {
     response.status(500).send('Internal server error');
   }
 });
