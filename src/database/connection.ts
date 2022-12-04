@@ -1,4 +1,4 @@
-const { Pool, Client } = require('pg');
+const { Pool } = require('pg');
 
 const pool = new Pool({
   user: process.env.USER || 'postgres',
@@ -22,9 +22,7 @@ export class Connection {
         return result;
       }
     } catch (err) {
-      console.log(err);
-    } finally {
-      pool.end();
+      console.log('erro', err);
     }
   }
   async insert(table: string, params: any[]) {
@@ -39,9 +37,10 @@ export class Connection {
       const sql = `SELECT ${campos.join(', ')} FROM ${table} ${
         where ? where : ''
       }`;
+      console.log(sql);
 
       const result = await this.query(sql);
-      return result.rows;
+      return result?.rows || [];
     } catch (erro) {
       console.log('erro', erro);
     }
