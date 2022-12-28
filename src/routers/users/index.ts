@@ -1,31 +1,23 @@
-import { studentRouter } from './StudentRouter';
 import { Router } from 'express';
+import { StudentRouter } from './students';
+import { TeacherRouter } from './teachers';
+import { Login } from '../../useCases/Login';
 import { Connection } from '../../database/connection';
 
-const userRouter = Router();
+const UserRouter = Router();
 
-userRouter.use('/students', studentRouter);
+UserRouter.use('/students', StudentRouter);
+UserRouter.use('/teachers', TeacherRouter);
 
-userRouter.post('/login', async (request, response) => {
-  const role = request.body.role;
+UserRouter.post('/login', (request, response) => {
+  const { textKey, password, role } = request.body;
+  const connection = new Connection();
 
-  if (role === 'student') {
-    const { registration, password } = request.body;
-    const connection = new Connection();
-    const result = await connection.select('students', [
-      'registration',
-      'password',
-    ]);
-    if (
-      result[0].registration === registration &&
-      result[0].password === password
-    ) {
-      response.json(result);
-      console.log(result);
-    } else {
-      response.status(500).send('Internal server error');
-    }
-  }
+  const login = new Login(connection);
+
+  login.execute({ textKey, password, role });
+
+  return response.json({ message: 'Login' });
 });
 
-export { userRouter };
+export { UserRouter };

@@ -32,11 +32,9 @@ export class Connection {
     return result;
   }
 
-  async select(table: string, campos: string[], where?: string) {
+  async select(table: string, campos: string[], where: string = '') {
     try {
-      const sql = `SELECT ${campos.join(', ')} FROM ${table} ${
-        where ? where : ''
-      }`;
+      const sql = `SELECT ${campos.join(', ')} FROM ${table} ${where}`;
       console.log(sql);
 
       const result = await this.query(sql);

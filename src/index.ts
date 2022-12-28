@@ -1,7 +1,8 @@
 import express from 'express';
-import { userRouter } from './routers/users/';
+import { router } from './routers';
 const port = process.env.PORT || 5000;
 const app = express();
+
 app.use(express.json());
 app.use(express.json());
 
@@ -9,6 +10,6 @@ app.get('/', (_, response) => {
   response.send('Hello World');
 });
 
-app.use('/users', userRouter);
+app.use('/api', router);
 
 app.listen(port, () => console.log(`Server is running 🚀${port}`));
