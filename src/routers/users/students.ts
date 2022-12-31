@@ -2,6 +2,7 @@ import { response, Router } from 'express';
 import { Student } from '../../entities/Students';
 import { CreateStudent } from '../../useCases/CreateUser/CreateStudents';
 import { Connection } from '../../database/connection';
+import { GetStudentsById } from '../../useCases/getUser/getStudentsById';
 const StudentRouter = Router();
 
 StudentRouter.post('/create', (request, response) => {
@@ -11,7 +12,7 @@ StudentRouter.post('/create', (request, response) => {
     const connection = new Connection();
     const createStudent = new CreateStudent(connection);
 
-    const student = {
+    createStudent.execute({
       name,
       email,
       password,
@@ -20,9 +21,7 @@ StudentRouter.post('/create', (request, response) => {
       street,
       district,
       cep,
-    };
-
-    createStudent.execute(student);
+    });
 
     return response.status(201).json({
       message: 'Student created',
@@ -30,6 +29,22 @@ StudentRouter.post('/create', (request, response) => {
   } catch (error) {
     return response.status(400).json({
       message: 'Error creating student',
+    });
+  }
+});
+
+StudentRouter.post('/list', async (request, response) => {
+  try {
+    const connection = new Connection();
+    const getStudentsById = new GetStudentsById(connection);
+
+    console.log(request.body);
+    const students = await getStudentsById.execute(request.body);
+
+    return response.send(students).status(200);
+  } catch (error) {
+    return response.status(400).json({
+      message: 'Error getting students',
     });
   }
 });

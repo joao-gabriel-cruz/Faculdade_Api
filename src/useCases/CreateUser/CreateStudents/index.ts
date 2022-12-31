@@ -32,19 +32,19 @@ export class CreateStudent {
         cep,
       });
 
-      const studentCreated = student.student;
+      const params = student.student;
 
       await this.connection.insert('students', [
-        studentCreated.id_student,
-        studentCreated.registration,
-        studentCreated.name,
-        studentCreated.course,
-        studentCreated.cpf,
-        studentCreated.email,
-        studentCreated.street,
-        studentCreated.district,
-        studentCreated.cep,
-        studentCreated.password,
+        params.id_student,
+        params.registration,
+        params.name,
+        params.course,
+        params.cpf,
+        params.email,
+        params.street,
+        params.district,
+        params.cep,
+        params.password,
       ]);
 
       return student;

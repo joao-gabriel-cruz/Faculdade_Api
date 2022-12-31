@@ -9,16 +9,17 @@ interface ILoginRequest {
 export class Login {
   constructor(private connection: Connection) {}
 
-  execute(request: ILoginRequest) {
+  async execute(request: ILoginRequest) {
     try {
       const { role } = request;
+      let user = '';
 
       switch (role) {
         case 'teacher':
-          this.TeacherLogin(request);
+          user = await this.TeacherLogin(request);
           break;
         case 'student':
-          this.StudentLogin(request);
+          user = await this.StudentLogin(request);
           break;
         default:
           throw {
@@ -26,7 +27,7 @@ export class Login {
             error: true,
           };
       }
-      return true;
+      return user;
     } catch (error) {
       throw {
         message: 'Error on login',
@@ -50,6 +51,7 @@ export class Login {
           error: true,
         };
       }
+      return teacher;
     } catch (error) {
       throw {
         message: 'Error on login',
@@ -67,17 +69,21 @@ export class Login {
         ['registration', 'password'],
         `where registration = '${textKey}' AND password = '${password}'`
       );
+      console.log(student);
+
       if (student.length === 0) {
         throw {
           message: 'Student not found',
           error: true,
         };
       }
-      return true;
+      return student;
     } catch (error) {
+      console.log(error);
+
       throw {
         message: 'Error on login',
-        error,
+        error: true,
       };
     }
   }

@@ -15,15 +15,15 @@ export class CreateTeacher {
     const { name, cpf, subject, email } = request;
     const newTeacher = new Teacher({ name, cpf, subject, email });
 
-    const teacherCreated = newTeacher.teacher;
+    const params = newTeacher.teacher;
 
     await this.connection.insert('teachers', [
-      teacherCreated.id_teacher,
-      teacherCreated.name,
-      teacherCreated.cpf,
-      teacherCreated.subject,
-      teacherCreated.email,
-      teacherCreated.password,
+      params.id_teacher,
+      params.name,
+      params.cpf,
+      params.subject,
+      params.email,
+      params.password,
     ]);
 
     return newTeacher;

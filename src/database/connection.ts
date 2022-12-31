@@ -26,10 +26,23 @@ export class Connection {
     }
   }
   async insert(table: string, params: any[]) {
-    const values = params.map((_, index) => `$${index + 1}`).join(', ');
-    const sql = `INSERT INTO ${table} VALUES (${values})`;
-    const result = await this.query(sql, params);
-    return result;
+    try {
+      const values = params.map((_, index) => `$${index + 1}`).join(', ');
+      const sql = `INSERT INTO ${table} VALUES (${values})`;
+      const result = await this.query(sql, params);
+      return result;
+    } catch (err) {
+      throw {
+        message: 'Error creating student',
+        error: err,
+      };
+    }
+  }
+
+  async selectBySubject(typeUser: string, subject: string) {
+    try {
+      console.log('typeUser', typeUser);
+    } catch (err) {}
   }
 
   async select(table: string, campos: string[], where: string = '') {
